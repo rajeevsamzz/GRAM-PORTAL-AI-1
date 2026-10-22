@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+.env
+.DS_Store
+
+# Local user data and generated uploads
+database.db
+static/uploads/*

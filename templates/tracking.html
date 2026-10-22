@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+{% if c %}
+
+
+<div class="card">
+
+
+    <h2>
+        {{ c.ticket }}
+    </h2>
+
+
+    <p>
+
+        <b>
+            {{ c.title }}
+        </b>
+
+    </p>
+
+
+    <p>
+
+        {{ c.description }}
+
+    </p>
+
+
+    <div class="grid">
+
+
+        <div>
+
+            <b>
+                Category
+            </b>
+
+            <br>
+
+            {{ c.category }}
+
+        </div>
+
+
+        <div>
+
+            <b>
+                Priority
+            </b>
+
+            <br>
+
+            {{ c.priority }}
+
+        </div>
+
+
+        <div>
+
+            <b>
+                Department
+            </b>
+
+            <br>
+
+            {{ c.department }}
+
+        </div>
+
+
+        <div>
+
+            <b>
+                Status
+            </b>
+
+            <br>
+
+            {{ c.status }}
+
+        </div>
+
+
+        <div>
+
+            <b>
+                Deadline
+            </b>
+
+            <br>
+
+            {{ c.deadline }}
+
+        </div>
+        <div><b>AI Confidence</b><br>{{ "%.0f"|format((c.ai_confidence or 0) * 100) }}%</div>
+        <div><b>AI Priority Score</b><br>{{ c.ai_priority_score or 0 }}/100 ({{ c.priority }})</div>
+        <div><b>SLA Status</b><br>{{ c.sla_status or "ON TIME" }}</div>
+
+
+    </div>
+
+
+    <hr>
+
+
+    <p>
+
+        <b>
+            Officer Note:
+        </b>
+
+        {{ c.officer_note or
+        "No note yet" }}
+
+    </p>
+
+
+    {% if
+        c.status == "Resolved"
+        and not c.citizen_verified
+    %}
+
+
+    <form
+        method="post"
+        action="/verify/{{ c.ticket }}"
+    >
+
+
+        <label>
+            Confirm resolution
+        </label>
+
+
+        <select name="rating">
+
+            <option value="5">
+                ⭐⭐⭐⭐⭐
+            </option>
+
+            <option value="4">
+                ⭐⭐⭐⭐
+            </option>
+
+            <option value="3">
+                ⭐⭐⭐
+            </option>
+
+            <option value="2">
+                ⭐⭐
+            </option>
+
+            <option value="1">
+                ⭐
+            </option>
+
+        </select>
+        <textarea name="feedback" placeholder="Optional feedback"></textarea>
+
+
+        <button>
+            Verify Resolution
+        </button>
+
+
+    </form>
+
+
+    {% elif c.citizen_verified %}
+
+
+    <p>
+
+        ✅ Verified by citizen
+
+        —
+
+        Rating:
+
+        {{ c.rating }}/5
+
+    </p>
+
+
+    {% endif %}
+
+
+</div>
+
+
+{% else %}
+
+
+<p>
+    Complaint not found.
+</p>
+
+
+{% endif %}
+
+
+{% endblock %}

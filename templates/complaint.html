@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+<div class="card form">
+
+
+    <h2>
+        Submit Complaint
+    </h2>
+
+
+    <form
+        method="post"
+        enctype="multipart/form-data"
+    >
+
+
+        <input
+            name="title"
+            placeholder="Complaint title"
+            required
+        >
+
+
+        <textarea
+            id="description"
+            name="description"
+            placeholder="Describe the problem..."
+            required
+        ></textarea>
+        <button type="button" class="secondary" onclick="startVoiceInput()">🎙 Speak Complaint</button>
+        <small id="voice-status">English voice input is available in supported browsers.</small>
+
+
+        <label>
+            Photo Evidence
+        </label>
+
+
+        <input
+            name="image"
+            type="file"
+            accept="image/*"
+        >
+
+
+        <label>
+            GPS Location
+        </label>
+
+
+        <input
+            id="lat"
+            name="latitude"
+            placeholder="Latitude"
+            readonly
+        >
+
+
+        <input
+            id="lon"
+            name="longitude"
+            placeholder="Longitude"
+            readonly
+        >
+
+
+        <button
+            type="button"
+            class="secondary"
+            onclick="getGPS()"
+        >
+
+            📍 Detect My Location
+
+        </button>
+
+
+        <button>
+
+            Submit Complaint
+
+        </button>
+
+
+    </form>
+
+
+</div>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+
+
+<script>
+
+function getGPS() {
+
+    if (!navigator.geolocation) {
+
+        alert(
+            "Geolocation is not supported."
+        );
+
+        return;
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            document.getElementById(
+                "lat"
+            ).value =
+                position.coords.latitude;
+
+
+            document.getElementById(
+                "lon"
+            ).value =
+                position.coords.longitude;
+
+        },
+
+        function(error) {
+
+            alert(
+                "Please allow location access."
+            );
+
+        }
+
+    );
+
+}
+
+</script>
+
+
+{% endblock %}

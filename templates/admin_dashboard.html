@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+<div class="top">
+
+
+    <h2>
+        Admin Dashboard
+    </h2>
+
+
+    <a
+        class="btn"
+        href="/map"
+    >
+
+        🗺 Complaint Map
+
+    </a>
+
+
+</div>
+
+
+<div class="grid">
+
+
+    <div class="stat">
+
+        <b>
+            {{ stats["pending"] or 0 }}
+        </b>
+
+        <span>
+            Pending
+        </span>
+
+    </div>
+
+
+    <div class="stat">
+
+        <b>
+            {{ stats["resolved"] or 0 }}
+        </b>
+
+        <span>
+            Resolved
+        </span>
+
+    </div>
+
+
+</div>
+
+
+<div class="card">
+
+
+    <h3>
+        Complaint Management
+    </h3>
+
+
+    <form method="get" action="{{ url_for('admin') }}" class="filter-grid">
+        <input name="search" value="{{ filters.search }}" placeholder="Search ticket, text, location">
+        <select name="department"><option value="">All departments</option><option>Water Supply Department</option><option>Sanitation Department</option><option>Engineering Department</option><option>Engineering/Drainage Department</option><option>Electrical Department</option></select>
+        <select name="status"><option value="">All statuses</option>{% for item in ['Pending','Assigned','In Progress','Resolved'] %}<option {% if filters.status == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select>
+        <select name="priority"><option value="">All priorities</option>{% for item in ['CRITICAL','HIGH','MEDIUM','LOW'] %}<option {% if filters.priority == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select>
+
+        <label for="category-filter">
+            Filter by category
+        </label>
+
+        <select id="category-filter" name="category">
+
+            <option value="">All categories</option>
+
+            {% for category in categories %}
+
+            <option
+                value="{{ category }}"
+                {% if category == selected_category %}selected{% endif %}
+            >
+                {{ category }}
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+        <button type="submit">
+            Apply Filter
+        </button>
+
+        {% if selected_category %}
+
+        <a class="btn secondary" href="{{ url_for('admin') }}">
+            Clear
+        </a>
+
+        {% endif %}
+
+    </form>
+
+    <table>
+
+
+        <tr>
+
+            <th>AI Score</th>
+            <th>SLA</th>
+            <th>Cluster</th>
+            <th>
+                Ticket
+            </th>
+
+            <th>
+                Citizen
+            </th>
+
+            <th>
+                Category
+            </th>
+
+            <th>
+                Priority
+            </th>
+
+            <th>
+                Department
+            </th>
+
+            <th>
+                Status
+            </th>
+
+            <th>
+                Update
+            </th>
+
+        </tr>
+
+
+        {% for complaint in complaints %}
+
+
+        <tr>
+
+
+            <td>
+                {{ complaint.ticket }}
+            </td>
+
+
+            <td>
+                {{ complaint.name }}
+            </td>
+
+
+            <td>
+                {{ complaint.category }}
+            </td>
+
+
+            <td>
+                {{ complaint.priority }}
+            </td>
+
+
+            <td>
+                {{ complaint.department }}
+            </td>
+
+
+            <td>
+                {{ complaint.status }}
+            </td>
+            <td>{{ complaint.ai_priority_score or 0 }}/100<br>{{ "%.0f"|format((complaint.ai_confidence or 0) * 100) }}%</td>
+            <td>{{ complaint.sla_status }}{% if complaint.escalation_status == 'ESCALATED' %}<strong class="warning"> ESCALATED</strong>{% endif %}</td>
+            <td>{{ complaint.cluster_id or '—' }}</td>
+
+
+            <td>
+
+
+                <form
+                    method="post"
+                    action="/admin/update/{{ complaint.id }}"
+                >
+
+
+                    <select name="status">
+
+                        <option>
+                            Pending
+                        </option>
+
+                        <option>
+                            Assigned
+                        </option>
+
+                        <option>
+                            In Progress
+                        </option>
+
+                        <option>
+                            Resolved
+                        </option>
+
+                    </select>
+
+
+                    <input
+                        name="note"
+                        placeholder="Officer note"
+                    >
+
+
+                    <button>
+                        Save
+                    </button>
+
+
+                </form>
+
+
+                <form
+                    method="post"
+                    action="{{ url_for('delete_complaint', cid=complaint.id) }}"
+                    onsubmit="return confirm('Delete this complaint permanently?');"
+                >
+
+                    <button
+                        type="submit"
+                        class="danger"
+                    >
+                        Delete
+                    </button>
+
+                </form>
+
+
+            </td>
+
+
+        </tr>
+
+
+        {% endfor %}
+
+
+    </table>
+
+
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

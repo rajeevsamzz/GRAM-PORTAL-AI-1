@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+<div class="card">
+
+
+    <h2>
+        Complaint Map
+    </h2>
+
+
+    <div id="map"></div>
+
+
+</div>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+
+
+<script>
+
+
+const complaints =
+    {{ complaints | tojson }};
+
+
+const map =
+    L.map("map").setView(
+        [20.5937, 78.9629],
+        5
+    );
+
+
+L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+        maxZoom: 19,
+
+        attribution:
+            "© OpenStreetMap"
+    }
+).addTo(map);
+
+
+complaints.forEach(
+
+    function(complaint) {
+
+        L.marker(
+            [
+                complaint.latitude,
+                complaint.longitude
+            ]
+        )
+        .addTo(map)
+
+        .bindPopup(
+
+            "<b>"
+            + complaint.ticket
+            + "</b><br>"
+            + complaint.category
+            + "<br>"
+            + complaint.priority
+            + "<br>"
+            + complaint.status
+
+        );
+        L.circle([complaint.latitude, complaint.longitude], {radius: 180, color: complaint.priority === "CRITICAL" ? "#bd5141" : "#2d5bff", fillOpacity: 0.12}).addTo(map);
+
+    }
+
+);
+
+</script>
+
+
+{% endblock %}

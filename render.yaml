@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: gram-portal-ai
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: GRAM_PORTAL_SECRET
+        generateValue: true
+      - key: GRAM_PORTAL_ADMIN_EMAIL
+        sync: false
+      - key: GRAM_PORTAL_ADMIN_PASSWORD
+        sync: false
